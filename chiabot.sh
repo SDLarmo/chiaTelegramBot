@@ -15,11 +15,12 @@ do
 		WAIT_TIME=0
 		OLD_LINE=$NEW_LINE
 		GOOD_PLOTS=$(grep -Eo '[0-9]{1,3}' <<< $(grep -o '[0-9]* plots were' <<< $NEW_LINE))
-		TOTAL_PLOTS=$(grep -Eo '[0-9]{1,3}' <<< $(grep -o 'Total [0-9]* plots' <<< $NEW_LINE))
+		TOTAL_PLOTS=$(grep -Eo '[0-9]{1,5}' <<< $(grep -o 'Total [0-9]* plots' <<< $NEW_LINE))
 		TIME=$(grep -Eo '[0-9]{1,3}\.[0-9]{1,5} s.' <<< $NEW_LINE)
 		RESPONSE_SECONDS=$(grep -Eo '[0-9]{1,3}' <<< $TIME | head -1)
-		RESPONSE_MS=$(grep -Eo '[0-9]{1,5}' <<< $TIME | tail -1)
-		RESPONSE_MS_WHOLE=$(($RESPONSE_SECONDS*1000+${RESPONSE_MS#0}/100))
+		RESPONSE_MS_STRING=$(grep -Eo '[0-9]{1,5}' <<< $TIME | tail -1)
+		RESPONSE_MS_NUMBER=${RESPONSE_MS_STRING#0}
+		RESPONSE_MS_WHOLE=$(($RESPONSE_SECONDS*1000+${RESPONSE_MS_NUMBER#0}/100))
 		PROOFS=$(grep -Eo '[0-9]{1}' <<< $(grep -o '[0-9]* proof' <<< $NEW_LINE))
 		if [ "$MODE" = "INFO" ] || [ "$MODE" = "IMPORTANT" ]; then
       if (( $PROOFS > 0 )); then
