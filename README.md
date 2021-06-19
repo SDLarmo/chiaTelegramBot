@@ -1,5 +1,8 @@
 # What this bot does?
-It sends you a message with each attempt of your chia farm to find a proof.
+It sends you a telegram message containing: 
+1) Your chia farm summary;
+2) Proofs found;
+3) Attempts of your chia farm to find a proof.
 
 # Run Chia Telegram Bot
 1. Create new telegram bot using https://t.me/botfather
@@ -12,13 +15,24 @@ It sends you a message with each attempt of your chia farm to find a proof.
 8. Allow `chiabot.sh` to be executed with `sudo chmod u+x chiabot.sh` command
 9. Run bot with `./chiabot.sh` command
 
+# Receive farm summary
+You could set this bot to send you a summary message every X seconds:
+1. Set `MODE` of `chiabot.sh` to `SUMMARY`.
+2. Set `MSG_INTERVAL` of `chiabot.sh` to needed time in seconds ("360" for 5 minutes, "3600" for one hour, etc).
+3. Run the bot.
+
 # Receive only important messages
 You could set this bot to send you messages only in 2 cases:
 1. Your farm has found a proof
 2. There were no attempts to find a proof in the last 5 minutes
  
-To do this set `LOG_LEVEL` of `chiabot.sh` to anything except `INFO`.
+To do this set `MODE` of `chiabot.sh` to anything except `IMPORTANT`.
 You will not receive a warning if your PC isn't connected to the internet.
+
+# Receive messages for every attempt 
+You could set this bot to send you a summary message every X seconds:
+1. Set `MODE` of `chiabot.sh` to `INFO`.
+2. Run the bot.
 
 # Say thanks
 XCH: xch1ra8v89cdjafs492gtqxdgh5wlawdhdcyxwc6hta4qy92v03wfcjqtyxnwl
