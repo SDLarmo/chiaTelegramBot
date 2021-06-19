@@ -18,7 +18,7 @@ It sends you a telegram message containing:
 # Receive farm summary
 You could set this bot to send you a summary message every X seconds:
 1. Set `MODE` of `chiabot.sh` to `SUMMARY`.
-2. Set `MSG_INTERVAL` of `chiabot.sh` to needed time in seconds ("360" for 5 minutes, "3600" for one hour, etc).
+2. Set `MSG_INTERVAL` of `chiabot.sh` to needed time in seconds ("300" for 5 minutes, "3600" for one hour, etc).
 3. Run the bot.
 
 # Receive only important messages
