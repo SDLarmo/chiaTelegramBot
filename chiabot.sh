@@ -11,7 +11,7 @@ MAX_RESPONSE_TIME=0
 while (true)
 do
 	NEW_LINE=$(grep -w '[0-9] plots were eligible for farming' $LOG_PATH | tail -1)
-	if [ "$OLD_LINE" != "$NEW_LINE" ]; then
+	if [ "$OLD_LINE" != "$NEW_LINE" ] && [ "$NEW_LINE" != "" ]; then
 		WAIT_TIME=0
 		OLD_LINE=$NEW_LINE
 		GOOD_PLOTS=$(grep -Eo '[0-9]{1,3}' <<< $(grep -o '[0-9]* plots were' <<< $NEW_LINE))
