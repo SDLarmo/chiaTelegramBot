@@ -20,6 +20,10 @@ do
 		RESPONSE_SECONDS=$(grep -Eo '[0-9]{1,3}' <<< $TIME | head -1)
 		RESPONSE_MS_STRING=$(grep -Eo '[0-9]{1,5}' <<< $TIME | tail -1)
 		RESPONSE_MS_NUMBER=${RESPONSE_MS_STRING#0}
+		if [ "$RESPONSE_SECONDS" == "" ] || [ "$RESPONSE_MS_STRING" == "" ]; then
+		  echo "ERROR IN PARSING LINE: $NEW_LINE"
+		  exit 1
+		fi
 		RESPONSE_MS_WHOLE=$(($RESPONSE_SECONDS*1000+${RESPONSE_MS_NUMBER#0}/100))
 		PROOFS=$(grep -Eo '[0-9]{1}' <<< $(grep -o '[0-9]* proof' <<< $NEW_LINE))
 		if [ "$MODE" = "INFO" ] || [ "$MODE" = "IMPORTANT" ]; then
