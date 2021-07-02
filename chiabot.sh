@@ -84,7 +84,7 @@ do
 		curl -s --data "text=$TEXT" --data "chat_id=$CHAT_ID" 'https://api.telegram.org/bot'$TOKEN'/sendMessage'
 	fi
 
-	if (( $WAIT_TIME > 300 )); then
+	if (( $WAIT_TIME > 300 )) && (( $WAIT_TIME % 60 == 0 )); then
 		WARNING="WARNING! No response in $WAIT_TIME sec."
 		curl -s --data "text=$WARNING" --data "chat_id=$CHAT_ID" 'https://api.telegram.org/bot'$TOKEN'/sendMessage'
 	fi
