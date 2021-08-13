@@ -36,4 +36,4 @@ You could set this bot to send you a summary message every X seconds:
 2. Run the bot.
 
 # Say thanks
-XCH: xch1ra8v89cdjafs492gtqxdgh5wlawdhdcyxwc6hta4qy92v03wfcjqtyxnwl
+XCH: xch1xnhut6qlg38a94axmckuvt29qw65t6zrk2xwxtq8era93p6ahqqqfmkfum
