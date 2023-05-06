@@ -2,7 +2,7 @@
 
 usage() { echo "Usage: $0 [-m <summary|important|info>] [-c <chat_id>] [-t <token>]" 1>&2; exit 1; }
 
-while getopts ":m:c:t" flag; do
+while getopts ":m:c:t:" flag; do
     case "${flag}" in
         m) MODE=${OPTARG};;
         c) CHAT_ID=${OPTARG};;
