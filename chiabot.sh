@@ -1,10 +1,23 @@
 #!/bin/bash
 
-CHAT_ID=""
-TOKEN=""
+usage() { echo "Usage: $0 [-m <summary|important|info>] [-c <chat_id>] [-t <token>]" 1>&2; exit 1; }
+
+while getopts ":m:c:t" flag; do
+    case "${flag}" in
+        m) MODE=${OPTARG};;
+        c) CHAT_ID=${OPTARG};;
+        t) TOKEN=${OPTARG};;
+        *) usage;;
+    esac
+done
+
+if [ -z "$MODE" ] || [ -z "$CHAT_ID" ] || [ -z "$TOKEN" ]; then
+  usage
+  exit 1
+fi
+
 LOG_PATH=~/.chia/mainnet/log/debug.log
-MODE="SUMMARY"
-MSG_INTERVAL="300"
+MSG_INTERVAL="3600"
 
 MAX_RESPONSE_TIME=0
 
@@ -26,11 +39,11 @@ do
 		fi
 		RESPONSE_MS_WHOLE=$(($RESPONSE_SECONDS*1000+$RESPONSE_MS_NUMBER))
 		PROOFS=$(grep -Eo '[0-9]{1}' <<< $(grep -o '[0-9]* proof' <<< $NEW_LINE))
-		if [ "$MODE" = "INFO" ] || [ "$MODE" = "IMPORTANT" ]; then
+		if [ "$MODE" = "info" ] || [ "$MODE" = "important" ]; then
       if (( $PROOFS > 0 )); then
         RESULT="! YOU WON !"
       else
-        if (($RESPONSE_MS_WHOLE > 5000)); then
+        if (($RESPONSE_MS_WHOLE > 20000)); then
           RESULT="0 proofs. WARNING: Your farm is too slow."
         else
           RESULT="0 proofs."
@@ -39,7 +52,7 @@ do
 
       TEXT="$GOOD_PLOTS/$TOTAL_PLOTS farmed in $RESPONSE_MS_WHOLE ms. $RESULT"
 
-      if [ "$MODE" = "INFO" ] || [ "$PROOFS" = "1" ]; then
+      if [ "$MODE" = "info" ] || [ "$PROOFS" = "1" ]; then
         curl -s --data "text=$TEXT" --data "chat_id=$CHAT_ID" 'https://api.telegram.org/bot'$TOKEN'/sendMessage'
       fi
     else
@@ -59,7 +72,7 @@ do
   CYCLE_TIME=$((CYCLE_TIME+3))
 	WAIT_TIME=$(($WAIT_TIME+3))
 
-	if [ "$MODE" = "SUMMARY" ] && (( $CYCLE_TIME >= MSG_INTERVAL )); then
+	if [ "$MODE" = "summary" ] && (( $CYCLE_TIME >= MSG_INTERVAL )); then
 	  EFFICIENCY=$((512*100*$TOTAL_PLOTS_PASSED/$TOTAL_PLOTS_NUMBER))
 	  AVG_RESPONSE_TIME=$(($TOTAL_RESPONSE_TIME/$TOTAL_BLOCKS))
 	  if (( $TOTAL_PROOFS > 0 )); then
