@@ -20,9 +20,11 @@ LOG_PATH=~/.chia/mainnet/log/debug.log
 MSG_INTERVAL="3600"
 
 MAX_RESPONSE_TIME=0
+OLD_WIN_COUNT=$(grep -c "Farmed unfinished_block" $LOG_PATH)
 
 while (true)
 do
+  NEW_WIN_COUNT=$(grep -c "Farmed unfinished_block" $LOG_PATH)
 	NEW_LINE=$(grep -w --text '[0-9] plots were eligible for farming' $LOG_PATH | tail -1)
 	if [ "$OLD_LINE" != "$NEW_LINE" ] && [ "$NEW_LINE" != "" ]; then
 		WAIT_TIME=0
@@ -40,19 +42,19 @@ do
 		RESPONSE_MS_WHOLE=$(($RESPONSE_SECONDS*1000+$RESPONSE_MS_NUMBER))
 		PROOFS=$(grep -Eo '[0-9]{1}' <<< $(grep -o '[0-9]* proof' <<< $NEW_LINE))
 		if [ "$MODE" = "info" ] || [ "$MODE" = "important" ]; then
-      if (( $PROOFS > 0 )); then
+      if (( $NEW_WIN_COUNT > $OLD_WIN_COUNT )); then
         RESULT="! YOU WON !"
       else
         if (($RESPONSE_MS_WHOLE > 20000)); then
-          RESULT="0 proofs. WARNING: Your farm is too slow."
+          RESULT="$PROOFS proofs. WARNING: Your farm is too slow."
         else
-          RESULT="0 proofs."
+          RESULT="$PROOFS proofs."
         fi
       fi
 
       TEXT="$GOOD_PLOTS/$TOTAL_PLOTS farmed in $RESPONSE_MS_WHOLE ms. $RESULT"
 
-      if [ "$MODE" = "info" ] || [ "$PROOFS" = "1" ]; then
+      if [ "$MODE" = "info" ] || [ $NEW_WIN_COUNT -gt $OLD_WIN_COUNT ]; then
         curl -s --data "text=$TEXT" --data "chat_id=$CHAT_ID" 'https://api.telegram.org/bot'$TOKEN'/sendMessage'
       fi
     else
@@ -65,6 +67,7 @@ do
        	MAX_RESPONSE_TIME=$RESPONSE_MS_WHOLE
       fi
     fi
+    OLD_WIN_COUNT=$NEW_WIN_COUNT
 	fi
 
 	sleep 3
@@ -75,11 +78,7 @@ do
 	if [ "$MODE" = "summary" ] && (( $CYCLE_TIME >= MSG_INTERVAL )); then
 	  EFFICIENCY=$((512*100*$TOTAL_PLOTS_PASSED/$TOTAL_PLOTS_NUMBER))
 	  AVG_RESPONSE_TIME=$(($TOTAL_RESPONSE_TIME/$TOTAL_BLOCKS))
-	  if (( $TOTAL_PROOFS > 0 )); then
-      RESULT="! YOU WON ! Found $TOTAL_PROOFS proofs."
-    else
-      RESULT="Found $TOTAL_PROOFS proofs."
-    fi
+    RESULT="Found $TOTAL_PROOFS proofs."
 		TEXT="Farm summary in $CYCLE_TIME sec:
 		Total blocks farmed: $TOTAL_BLOCKS
 		Plots passed the filter: $TOTAL_PLOTS_PASSED times
